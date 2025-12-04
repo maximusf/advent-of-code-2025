@@ -32,7 +32,7 @@ At the end, return zero_count
 def rotateDial(file, dial) -> int:
     zero_count = 0
     for line in file:
-        line = line.stip()
+        line = line.strip()
         if not line:
             continue
 
