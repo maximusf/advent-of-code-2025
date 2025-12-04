@@ -32,8 +32,7 @@ At the end, return zero_count
 def rotateDial(file, dial) -> int:
     zero_count = 0
     for line in file:
-        # sanitize line and skip empties
-        line = line.strip()
+        line = line.stip()
         if not line:
             continue
 
@@ -46,27 +45,17 @@ def rotateDial(file, dial) -> int:
         elif direction == 'R': # if R --> turn dial towards larger numbers
             dial = rotateRight(dial, distance)
 
+        # checks if dial is at 0, increment counter
         if dial == 0:
             zero_count += 1
     print("reached end of file")
     return zero_count # returns times dial rotated to '0' position
         
 
-"""
-TODO:
-    I'm sure there's a way of simplifying these two rotate 
-    functions into one and simply replacing the 'dial +- distance' line.
-
-    I also think we could use modular 99 arithmetic instead of abs(), 
-    reducing if-statements
-
-"""
 def rotateLeft(dial, distance):
-    # rotate left (toward smaller numbers) using modulo arithmetic
     return (dial - distance) % (DIAL_UPPER_BOUND + 1)
 
 def rotateRight(dial, distance):
-    # rotate right (toward larger numbers) using modulo arithmetic
     return (dial + distance) % (DIAL_UPPER_BOUND + 1)
 
 
@@ -83,10 +72,6 @@ def main():
     except FileNotFoundError:
         print("file does not exist")
 
-    
 
-## Dunder main (__main__):
-## runs only if main.py is executed, 
-## does not run if main.py is imported elsewhere
 if __name__ == "__main__":
     main()
