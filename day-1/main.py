@@ -6,7 +6,7 @@ from typing import Final
 
 ## Circular dial always starts at 50
 DIAL_DEFAULT: Final[int] = 50
-DIAL_LOWER_BOUND: Final[int] = 0
+#DIAL_LOWER_BOUND: Final[int] = 0
 DIAL_UPPER_BOUND: Final[int] = 99
 
 
@@ -32,16 +32,22 @@ At the end, return zero_count
 def rotateDial(file, dial) -> int:
     zero_count = 0
     for line in file:
+        # sanitize line and skip empties
+        line = line.strip()
+        if not line:
+            continue
+
         # checks distance after rotation type
+        direction = line[0]
         distance = int(line[1:]) # number after turn direction
 
-        
-        if (line[0] == 'L'): # if L --> turn dial towards smaller numbers
+        if direction == 'L': # if L --> turn dial towards smaller numbers
             dial = rotateLeft(dial, distance)
-        elif (line[0] == 'R'): # if R --> turn dial towards larger numbers
+        elif direction == 'R': # if R --> turn dial towards larger numbers
             dial = rotateRight(dial, distance)
+
         if dial == 0:
-            zero_count+=1
+            zero_count += 1
     print("reached end of file")
     return zero_count # returns times dial rotated to '0' position
         
@@ -51,30 +57,17 @@ TODO:
     I'm sure there's a way of simplifying these two rotate 
     functions into one and simply replacing the 'dial +- distance' line.
 
-    I also think we could use modular 99 arithmetic instead of abs(), reducing if-statements
+    I also think we could use modular 99 arithmetic instead of abs(), 
+    reducing if-statements
 
 """
 def rotateLeft(dial, distance):
-    # subtract distance
-    # if dial < DIAL_LOWER_BOUND, dial = |dial|
-    # if dial > DIAL_UPPER_BOUND, dial = DIAL_UPPER_BOUND - dial
-
-    dial - distance
-    if dial < DIAL_LOWER_BOUND:
-        dial = abs(dial)
-    if dial > DIAL_UPPER_BOUND:
-        dial = DIAL_UPPER_BOUND - dial
-
-    return dial
+    # rotate left (toward smaller numbers) using modulo arithmetic
+    return (dial - distance) % (DIAL_UPPER_BOUND + 1)
 
 def rotateRight(dial, distance):
-    
-    dial + distance
-    if dial > DIAL_UPPER_BOUND:
-        dial = DIAL_UPPER_BOUND - dial
-    if dial < DIAL_LOWER_BOUND:
-        dial = abs(dial)
-    return dial
+    # rotate right (toward larger numbers) using modulo arithmetic
+    return (dial + distance) % (DIAL_UPPER_BOUND + 1)
 
 
 
@@ -82,9 +75,9 @@ def main():
     dial = DIAL_DEFAULT # dial starts at 50
     try:
         with open('input.txt') as file:
-            zero_count = str(rotateDial(file, dial))
-        print("The dial rotated to '0' " + zero_count + " times.")
-        print("Answer: " + zero_count)
+            zero_count = rotateDial(file, dial)
+        print("The dial rotated to '0' " + str(zero_count) + " times.")
+        print("Answer: " + str(zero_count))
 
     # if input file is not found, error
     except FileNotFoundError:
